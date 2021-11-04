@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ This XML file controls the allow-list of packages that have the capability to perform a staged 
+ install (either APEX or APK) and a non-staged APEX install.
+-->
+<config>
+  <whitelisted-staged-installer package="com.android.vending" isModulesInstaller="true" />
+  <whitelisted-staged-installer package="com.google.android.GoogleCamera" />
+</config>
