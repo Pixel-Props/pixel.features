@@ -23,14 +23,11 @@ selector() {
     elif [ $SEL -eq 41 ]; then
       return 1
     else
-      retry_count=$((retry_count+1))
-      retry_left=$(($max_retry_count-$retry_count+1))
+      retry_count=$((retry_count + 1))
+      retry_left=$(($max_retry_count - $retry_count + 1))
       ui_print "  Volume key not detected, Retry left: $retry_left"
     fi
   done
 
-  abort "  Volume key timeout..."
+  abort "! Volume key timeout..."
 }
-
-# Keep old variable from previous versions of this
-VKSEL=selector

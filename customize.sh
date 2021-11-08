@@ -1,5 +1,5 @@
-# Running install
-[ -f "$MODPATH/common/install-offline.sh" ] && . $MODPATH/common/install-offline.sh
+# Running installer
+[ -f "$MODPATH/common/install.sh" ] && . $MODPATH/common/install.sh
 
 # Cleanup
 [ -d "$MODPATH/common" ] && rm -rf $MODPATH/common
