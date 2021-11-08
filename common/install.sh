@@ -27,7 +27,7 @@ if [ -f "$BootAnimation_location" ] && selector 'Do you want to install the Pixe
   [ -f "$BootAnimation_location" ] || wget -O "$BootAnimation_location" "$BootAnimation_download"
 
   # Extract archive
-  tar -xf "$BootAnimation_location"
+  tar -xf "$BootAnimation_location" -C "$MODPATH/system/product/media/"
 
   # Remove archive
   rm "$BootAnimation_location"
@@ -59,7 +59,7 @@ if [ -f "$NgaResources_location" ] && selector 'Do you want to install NgaResour
   [ -f "$NgaResources_location" ] || wget -O "$NgaResources_location" "$NgaResources_download"
 
   # Extract archive
-  tar -xf "$NgaResources_location"
+  tar -xf "$NgaResources_location" -C "$MODPATH/system/product/app/"
 
   # Remove archive
   rm "$NgaResources_location"
@@ -79,7 +79,7 @@ if [ -f "$PixelWallpapers2021_location" ] && selector 'Do you want to install Pi
   [ -f "$PixelWallpapers2021_location" ] || wget -O "$PixelWallpapers2021_location" "$PixelWallpapers2021_download"
 
   # Extract archive
-  tar -xf "$PixelWallpapers2021_location"
+  tar -xf "$PixelWallpapers2021_location" -C "$MODPATH/system/product/app/"
 
   # Remove archive
   rm "$PixelWallpapers2021_location"

@@ -11,7 +11,7 @@ download_size() {
     # Calculate and print estimated website size
     eval "$2='$(
       grep -e "Length" "$log_path" |
-        awk '{sum+=$2} END {printf("%.0f", sum / 1024 / 1024)}'
+        awk '{sum+=$2} END {printf("%.1f", sum / 1024 / 1024)}'
     ) Mb'"
 
     # Delete wget log file
