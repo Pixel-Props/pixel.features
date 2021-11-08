@@ -13,7 +13,7 @@ local NgaResources_download='https://github.com/Pixel-Props/pixel.features/raw/m
 local PixelWallpapers2021_download='https://github.com/Pixel-Props/pixel.features/raw/main/system/product/app/PixelWallpapers2021.tar.gz'
 
 # Local files
-local BootAnimation_location="$MODPATH/system/product/media/bootanimation.zip"
+local BootAnimation_location="$MODPATH/system/product/media/bootanimation.tar.gz"
 local NgaResources_location="$MODPATH/system/product/app/NgaResources.tar.gz"
 local PixelWallpapers2021_location="$MODPATH/system/product/app/PixelWallpapers2021.tar.gz"
 
@@ -63,7 +63,6 @@ if [ -f "$NgaResources_location" ] && selector 'Do you want to install NgaResour
 
   # Remove archive
   rm "$NgaResources_location"
-  ui_print ''
 else
   ui_print "[-] Removing NgaResources"
   ui_print ''
