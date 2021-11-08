@@ -46,7 +46,7 @@ if [ -f "$BootAnimation_location" ] && selector 'Do you want to install the Pixe
 else
   ui_print "[-] Removing Pixel Boot Animation"
   ui_print ''
-  rm -rf "$MODPATH/system/product/media/bootanimation*.zip"
+  rm -rf $MODPATH/system/product/media/bootanimation*.zip
 fi
 
 # NgaResources
@@ -66,7 +66,7 @@ if [ -f "$NgaResources_location" ] && selector 'Do you want to install NgaResour
 else
   ui_print "[-] Removing NgaResources"
   ui_print ''
-  rm -rf "$MODPATH/system/product/app/NgaResources*"
+  rm -rf $MODPATH/system/product/app/NgaResources*
 fi
 
 # PixelWallpapers2021
@@ -98,6 +98,6 @@ if selector "Do you want to keep 2020 and later XML's ?" "Keep" "Remove"; then
 else
   ui_print "[-] Removing 2020 and later pixel experience xml"
   ui_print ''
-  rm -rf "$MODPATH/system/product/etc/sysconfig/pixel_experience_202*.xml"
-  rm -rf "/system/product/etc/sysconfig/pixel_experience_202*.xml"
+  rm -rf $MODPATH/system/product/etc/sysconfig/pixel_experience_202*.xml
+  rm -rf /system/product/etc/sysconfig/pixel_experience_202*.xml
 fi

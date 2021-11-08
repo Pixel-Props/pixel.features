@@ -1,7 +1,7 @@
 download_size() {
   [ "$1" ] && local url=$1 || local url="https://example.com"
   [ "$2" ] || abort "Please specify a return variable name to be set"
-  local log_path="$MODPATH/common/addon/Website-Content-Size/$(xxd -l 5 -c 5 -p </dev/random).log"
+  local log_path="$TMPDIR/$(xxd -l 5 -c 5 -p </dev/random).log"
 
   # Make request
   wget --spider --server-response --output-file="$log_path" "$url"

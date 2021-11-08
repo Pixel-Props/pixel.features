@@ -1,4 +1,5 @@
 # External Tools
+[ $IS64BIT ] && ARCH32='arm' || ARCH32='x86'
 chmod -R 0755 $MODPATH/common/addon/Volume-Key-Selector/tools
 export PATH=$MODPATH/common/addon/Volume-Key-Selector/tools/$ARCH32:$PATH
 
