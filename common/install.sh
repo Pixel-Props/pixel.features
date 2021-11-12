@@ -7,15 +7,14 @@ if [ "$(ls -A $MODPATH/common/addon/*/install.sh 2>/dev/null)" ]; then
   done
 fi
 
-# Download url
-local BootAnimation_download='https://github.com/Pixel-Props/pixel.features/raw/main/system/product/media/bootanimation.tar.gz'
-local NgaResources_download='https://github.com/Pixel-Props/pixel.features/raw/main/system/product/app/NgaResources.tar.gz'
-local PixelWallpapers2021_download='https://github.com/Pixel-Props/pixel.features/raw/main/system/product/app/PixelWallpapers2021.tar.gz'
-
-# Local files
-local BootAnimation_location="$MODPATH/system/product/media/bootanimation.tar.gz"
-local NgaResources_location="$MODPATH/system/product/app/NgaResources.tar.gz"
-local PixelWallpapers2021_location="$MODPATH/system/product/app/PixelWallpapers2021.tar.gz"
+# Set file/download location
+set_location BootAnimation '/system/product/media/bootanimation.tar.gz'
+set_location AmbiantDisplay '/system/product/etc/ambient.tar.gz'
+set_location MusicDetector '/system/product/etc/firmware.tar.gz'
+set_location NgaResources '/system/product/app/NgaResources.tar.gz'
+set_location PixelWallpapers2021 '/system/product/app/PixelWallpapers2021.tar.gz'
+set_location Audio '/system/product/media/audio.tar.gz'
+set_location Fonts '/system/product/fonts.tar.gz'
 
 # Boot Animation
 download_size "$BootAnimation_download" file_size
@@ -47,6 +46,49 @@ else
   ui_print "[-] Removing Pixel Boot Animation"
   ui_print ''
   rm -rf $MODPATH/system/product/media/bootanimation*.zip
+fi
+
+# Ambiant Display
+download_size "$AmbiantDisplay_download" file_size
+if [ -f "$AmbiantDisplay_location" ] && selector 'Do you want to install the Pixel Ambiant Display ?' || selector "Do you want to download the Pixel Ambiant Display ? ($file_size)"; then
+  ui_print ' After installation please get the app "Pixel Ambient Services" from the Play Store'
+  ui_print ' > "https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'
+  [ -f "$AmbiantDisplay_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+  ui_print ''
+
+  # Download file
+  [ -f "$AmbiantDisplay_location" ] || wget -O "$AmbiantDisplay_location" "$AmbiantDisplay_download"
+
+  # Extract archive
+  tar -xf "$AmbiantDisplay_location" -C "$MODPATH/system/product/etc/"
+
+  # Remove archive
+  rm "$AmbiantDisplay_location"
+else
+  ui_print "[-] Removing Pixel Ambiant Display"
+  ui_print ''
+  rm -rf $MODPATH/system/product/etc/ambient*
+fi
+
+# Adaptive Audio Firmware
+download_size "$MusicDetector_download" file_size
+if [ -f "$MusicDetector_location" ] && selector 'Do you want to install the Pixel Adaptive Audio Firmware ?' || selector "Do you want to download the Pixel Adaptive Audio Firmware ? ($file_size)"; then
+  [ -f "$MusicDetector_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+  ui_print ''
+
+  # Download file
+  [ -f "$MusicDetector_location" ] || wget -O "$MusicDetector_location" "$MusicDetector_download"
+
+  # Extract archive
+  tar -xf "$MusicDetector_location" -C "$MODPATH/system/product/etc/"
+
+  # Remove archive
+  rm "$MusicDetector_location"
+else
+  ui_print "[-] Removing Pixel Adaptive Audio Firmware"
+  ui_print ''
+  rm -rf $MODPATH/system/product/etc/firmware*
+  rm -rf $MODPATH/service.sh
 fi
 
 # NgaResources
@@ -87,6 +129,46 @@ else
   ui_print "[-] Removing PixelWallpapers2021"
   ui_print ''
   rm -rf "$MODPATH/system/product/app/PixelWallpapers2021"
+fi
+
+# Audio/Sounds
+download_size "$Audio_download" file_size
+if [ -f "$Audio_location" ] && selector 'Do you want to install Default Pixel Audio/Sounds ?' || selector "Do you want to download Default Pixel Audio/Sounds ? ($file_size)"; then
+  [ -f "$Audio_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+  ui_print ''
+
+  # Download file
+  [ -f "$Audio_location" ] || wget -O "$Audio_location" "$Audio_download"
+
+  # Extract archive
+  tar -xf "$Audio_location" -C "$MODPATH/system/product/media/"
+
+  # Remove archive
+  rm "$Audio_location"
+else
+  ui_print "[-] Removing Default Pixel Audio/Sounds"
+  ui_print ''
+  rm -rf "$MODPATH/system/product/media/audio.tar.gz"
+fi
+
+# Fonts
+download_size "$Fonts_download" file_size
+if [ -f "$Fonts_location" ] && selector 'Do you want to install Default Pixel Fonts ?' || selector "Do you want to download Default Pixel Fonts ? ($file_size)"; then
+  [ -f "$Fonts_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+  ui_print ''
+
+  # Download file
+  [ -f "$Fonts_location" ] || wget -O "$Fonts_location" "$Fonts_download"
+
+  # Extract archive
+  tar -xf "$Fonts_location" -C "$MODPATH/system/product/"
+
+  # Remove archive
+  rm "$Fonts_location"
+else
+  ui_print "[-] Removing Default Pixel Fonts"
+  ui_print ''
+  rm -rf "$MODPATH/system/product/fonts.tar.gz"
 fi
 
 # Unlimited GPhoto
