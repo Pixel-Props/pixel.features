@@ -7,14 +7,14 @@ if [ "$(ls -A $MODPATH/common/addon/*/install.sh 2>/dev/null)" ]; then
   done
 fi
 
-# Set file/download location
-set_location BootAnimation '/system/product/media/bootanimation.tar.gz'
-set_location AmbiantDisplay '/system/product/etc/ambient.tar.gz'
-set_location MusicDetector '/system/product/etc/firmware.tar.gz'
-set_location NgaResources '/system/product/app/NgaResources.tar.gz'
-set_location PixelWallpapers2021 '/system/product/app/PixelWallpapers2021.tar.gz'
-set_location Audio '/system/product/media/audio.tar.gz'
-set_location Fonts '/system/product/fonts.tar.gz'
+# Export file/download location
+export_location BootAnimation '/system/product/media/bootanimation.tar.gz'
+export_location AmbientDisplay '/system/product/etc/ambient.tar.gz'
+export_location MusicDetector '/system/product/etc/firmware.tar.gz'
+export_location NgaResources '/system/product/app/NgaResources.tar.gz'
+export_location PixelWallpapers2021 '/system/product/app/PixelWallpapers2021.tar.gz'
+export_location Audio '/system/product/media/audio.tar.gz'
+export_location Fonts '/system/product/fonts.tar.gz'
 
 # Boot Animation
 download_size "$BootAnimation_download" file_size
@@ -48,24 +48,24 @@ else
   rm -rf $MODPATH/system/product/media/bootanimation*.zip
 fi
 
-# Ambiant Display
-download_size "$AmbiantDisplay_download" file_size
-if [ -f "$AmbiantDisplay_location" ] && selector 'Do you want to install the Pixel Ambiant Display ?' || selector "Do you want to download the Pixel Ambiant Display ? ($file_size)"; then
+# Ambient Display
+download_size "$AmbientDisplay_download" file_size
+if [ -f "$AmbientDisplay_location" ] && selector 'Do you want to install the Pixel Ambient Display ?' || selector "Do you want to download the Pixel Ambient Display ? ($file_size)"; then
   ui_print ' After installation please get the app "Pixel Ambient Services" from the Play Store'
   ui_print ' > "https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'
-  [ -f "$AmbiantDisplay_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+  [ -f "$AmbientDisplay_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
   ui_print ''
 
   # Download file
-  [ -f "$AmbiantDisplay_location" ] || wget -O "$AmbiantDisplay_location" "$AmbiantDisplay_download"
+  [ -f "$AmbientDisplay_location" ] || wget -O "$AmbientDisplay_location" "$AmbientDisplay_download"
 
   # Extract archive
-  tar -xf "$AmbiantDisplay_location" -C "$MODPATH/system/product/etc/"
+  tar -xf "$AmbientDisplay_location" -C "$MODPATH/system/product/etc/"
 
   # Remove archive
-  rm "$AmbiantDisplay_location"
+  rm "$AmbientDisplay_location"
 else
-  ui_print "[-] Removing Pixel Ambiant Display"
+  ui_print "[-] Removing Pixel Ambient Display"
   ui_print ''
   rm -rf $MODPATH/system/product/etc/ambient*
 fi
