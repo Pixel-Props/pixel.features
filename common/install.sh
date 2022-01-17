@@ -15,6 +15,7 @@ export_location NgaResources '/system/product/app/NgaResources.tar.gz'
 export_location PixelWallpapers2021 '/system/product/app/PixelWallpapers2021.tar.gz'
 export_location Audio '/system/product/media/audio.tar.gz'
 export_location Fonts '/system/product/fonts.tar.gz'
+export_location PixelProps '/system/system.prop.tar.gz'
 
 # Boot Animation
 download_size "$BootAnimation_download" file_size
@@ -32,18 +33,19 @@ if [ -f "$BootAnimation_location" ] && selector 'Do you want to install the Pixe
   rm "$BootAnimation_location"
 
   # Black or White
-  if selector "Animation Theme" "Black" "White"; then
-    ui_print "[+] Installing [Black] Pixel Boot Animation"
+  if selector "Animation Theme" "Black/Monet" "White"; then
+    ui_print " [+] Installing [Black/Monet] Pixel Boot Animation"
     ui_print ''
+
     rm -rf "$MODPATH/system/product/media/bootanimation.zip"
     mv "$MODPATH/system/product/media/bootanimation-dark.zip" "$MODPATH/system/product/media/bootanimation.zip"
   else
-    ui_print "[+] Installing [White] Pixel Boot Animation"
+    ui_print " [+] Installing [White] Pixel Boot Animation"
     ui_print ''
     rm -rf "$MODPATH/system/product/media/bootanimation-dark.zip"
   fi
 else
-  ui_print "[-] Removing Pixel Boot Animation"
+  ui_print " [-] Removing Pixel Boot Animation"
   ui_print ''
   rm -rf $MODPATH/system/product/media/bootanimation*.zip
 fi
@@ -51,8 +53,9 @@ fi
 # Ambient Display
 download_size "$AmbientDisplay_download" file_size
 if [ -f "$AmbientDisplay_location" ] && selector 'Do you want to install the Pixel Ambient Display ?' || selector "Do you want to download the Pixel Ambient Display ? ($file_size)"; then
-  ui_print ' After installation please get the app "Pixel Ambient Services" from the Play Store'
-  ui_print ' > "https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'
+  ui_print ' [?] After installation please get the app "Pixel Ambient Services" from the Play Store'
+  ui_print ' [?>] "https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'
+
   [ -f "$AmbientDisplay_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
   ui_print ''
 
@@ -65,7 +68,7 @@ if [ -f "$AmbientDisplay_location" ] && selector 'Do you want to install the Pix
   # Remove archive
   rm "$AmbientDisplay_location"
 else
-  ui_print "[-] Removing Pixel Ambient Display"
+  ui_print " [-] Removing Pixel Ambient Display"
   ui_print ''
   rm -rf $MODPATH/system/product/etc/ambient*
 fi
@@ -85,7 +88,7 @@ if [ -f "$MusicDetector_location" ] && selector 'Do you want to install the Pixe
   # Remove archive
   rm "$MusicDetector_location"
 else
-  ui_print "[-] Removing Pixel Adaptive Audio Firmware"
+  ui_print " [-] Removing Pixel Adaptive Audio Firmware"
   ui_print ''
   rm -rf $MODPATH/system/product/etc/firmware*
   rm -rf $MODPATH/service.sh
@@ -106,7 +109,7 @@ if [ -f "$NgaResources_location" ] && selector 'Do you want to install NgaResour
   # Remove archive
   rm "$NgaResources_location"
 else
-  ui_print "[-] Removing NgaResources"
+  ui_print " [-] Removing NgaResources"
   ui_print ''
   rm -rf $MODPATH/system/product/app/NgaResources*
 fi
@@ -126,9 +129,9 @@ if [ -f "$PixelWallpapers2021_location" ] && selector 'Do you want to install Pi
   # Remove archive
   rm "$PixelWallpapers2021_location"
 else
-  ui_print "[-] Removing PixelWallpapers2021"
+  ui_print " [-] Removing PixelWallpapers2021"
   ui_print ''
-  rm -rf "$MODPATH/system/product/app/PixelWallpapers2021"
+  rm -rf $MODPATH/system/product/app/PixelWallpapers2021*
 fi
 
 # Audio/Sounds
@@ -146,9 +149,9 @@ if [ -f "$Audio_location" ] && selector 'Do you want to install Default Pixel Au
   # Remove archive
   rm "$Audio_location"
 else
-  ui_print "[-] Removing Default Pixel Audio/Sounds"
+  ui_print " [-] Removing Default Pixel Audio/Sounds"
   ui_print ''
-  rm -rf "$MODPATH/system/product/media/audio.tar.gz"
+  rm -rf "$Audio_location"
 fi
 
 # Fonts
@@ -166,20 +169,44 @@ if [ -f "$Fonts_location" ] && selector 'Do you want to install Default Pixel Fo
   # Remove archive
   rm "$Fonts_location"
 else
-  ui_print "[-] Removing Default Pixel Fonts"
+  ui_print " [-] Removing Default Pixel Fonts"
   ui_print ''
-  rm -rf "$MODPATH/system/product/fonts.tar.gz"
+  rm -rf "$Fonts_location"
 fi
 
 # Unlimited GPhoto
 ui_print "[?+] Keeping 2020 and later pixel experience xml *breaks* Unlimited GPhoto."
 ui_print "[?-] Removing 2020 and later pixel experience xml *removes* some new features."
 if selector "Do you want to keep 2020 and later XML's ?" "Keep" "Remove"; then
-  ui_print "[+] Keeping 2020 and later pixel experience xml"
+  ui_print " [+] Keeping 2020 and later pixel experience xml"
   ui_print ''
 else
-  ui_print "[-] Removing 2020 and later pixel experience xml"
+  ui_print " [-] Removing 2020 and later pixel experience xml"
   ui_print ''
+
   rm -rf $MODPATH/system/product/etc/sysconfig/pixel_experience_202*.xml
   rm -rf /system/product/etc/sysconfig/pixel_experience_202*.xml
+
+  # Pixel Props
+  ui_print "[?+] Installing Pixel Props might help getting Unlimited GPhoto at Original Quality."
+  download_size "$PixelProps_download" file_size
+  if [ -f "$PixelProps_location" ] && selector 'Do you want to install Pixel Props (sailfish) as well?' || selector "Do you want to download Pixel Props (sailfish) as well? ($file_size)"; then
+    [ -f "$PixelProps_location" ] && ui_print ' Installing...' || ui_print ' Downloading...'
+    ui_print " [?] Make sure you have no other module that changes your system props."
+    ui_print " [?>] https://t.me/PixelProps/105"
+    ui_print ''
+
+    # Download file
+    [ -f "$PixelProps_location" ] || wget -O "$PixelProps_location" "$PixelProps_download"
+
+    # Extract archive
+    tar -xf "$PixelProps_location" -C "$MODPATH/"
+
+    # Remove archive
+    rm "$PixelProps_location"
+  else
+    ui_print " [-] Removing Pixel Props"
+    ui_print ''
+    rm -rf "$PixelProps_location"
+  fi
 fi

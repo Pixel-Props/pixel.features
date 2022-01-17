@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- These are configurations that should exist on devices that support Quick
+  Tap -->
+<config>
+  <!-- This feature is meant to be the feature identifying devices that support
+    Quick Tap -->
+  <feature name="com.google.android.feature.QUICK_TAP" />
+</config>
