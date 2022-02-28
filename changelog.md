@@ -1,3 +1,8 @@
+**2022-02-28 (22022801-22022802)**
+- Enabling new Google Dialer pad on sqlite3 GMS
+- Disabled uninstaller as it is too destructive for now
+- Fixed installed package detection
+
 **2022-02-28 (22022800)**
 - Added Pixel GBoard Features
 - Added support for Google Dialer Call Recording
