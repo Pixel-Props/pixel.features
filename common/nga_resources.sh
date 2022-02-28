@@ -4,14 +4,14 @@ if [ "$API" -ge 31 ]; then
   download_size "$NgaResources_download" file_size
   packageName="com.google.android.googlequicksearchbox.nga_resources"
 
-  if has_package "com.google.android.as"; then
+  if has_package "$packageName"; then
     ui_print " [?] NgaResources is already installed on this device."
     ui_print ''
   else
     ui_print " [?] NgaResources is not installed on this device."
   fi
 
-  if ! has_package "com.google.android.as"; then
+  if ! has_package "$packageName"; then
     if [ -f "$Audio_location" ] && selector "Install NgaResources ? (Next Generation Assistant)" "$useRecommendedSettings" || selector "Download NgaResources ? ($file_size) (Next Generation Assistant)" "$useRecommendedSettings"; then
       [ -f "$NgaResources_location" ] && ui_print ' [+] Installing...' || ui_print ' [⭳] Downloading...'
 

@@ -2,15 +2,16 @@
 
 if [ "$API" -ge 31 ]; then
   download_size "$DevicePersonalization_download" file_size
+  packageName="com.google.android.as"
 
-  if has_package "com.google.android.as"; then
+  if has_package "$packageName"; then
     ui_print " [?] Android System Intelligence is already installed on this device."
     ui_print ''
   else
     ui_print " [?] Android System Intelligence is not installed on this device."
   fi
 
-  if ! has_package "com.google.android.as"; then
+  if ! has_package "$packageName"; then
     if [ -f "$DevicePersonalization_location" ] &&
       selector "Install Android System Intelligence ?" "$useRecommendedSettings" ||
       selector "Download Android System Intelligence ? ($file_size)" "$useRecommendedSettings"; then
