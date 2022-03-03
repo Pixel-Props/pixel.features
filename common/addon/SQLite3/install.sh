@@ -32,7 +32,7 @@ insert_gms_features() {
   shift # Remove floatVal argument
   [ "$1" ] && stringVal=$1 || stringVal=null
   shift # Remove stringVal argument
-  [ "$1" ] && committed=$1 || committed=0
+  [ "$1" ] && committed=$1 || committed=1
   shift # Remove committed argument
 
   # Make sure database is open
@@ -53,11 +53,11 @@ insert_gms_features() {
     $SQLite3 $gms "DELETE FROM $tableName WHERE packageName='$packageName' AND name='$featureName';"
 
     # Enable feature for system
-    $SQLite3 "$gms" "INSERT INTO $tableName (packageName, flagType, user, name, intVal, boolVal, committed) VALUES ('$packageName', '$flagType', '', '$featureName', '$intVal', '$boolVal', '$committed');"
+    $SQLite3 "$gms" "INSERT INTO $tableName (packageName, flagType, user, name, intVal, boolVal, floatVal, stringVal, committed) VALUES ('$packageName', '$flagType', '', '$featureName', '$intVal', '$boolVal', '$floatVal', '$stringVal', '$committed');"
 
     # Enable feature per account
     for user in $google_accounts; do
-      $SQLite3 "$gms" "INSERT INTO $tableName (packageName, flagType, user, name, intVal, boolVal, committed) VALUES ('$packageName', '$flagType', '$user', '$featureName', '$intVal', '$boolVal', '$committed');"
+      $SQLite3 "$gms" "INSERT INTO $tableName (packageName, flagType, user, name, intVal, boolVal, floatVal, stringVal, committed) VALUES ('$packageName', '$flagType', '$user', '$featureName', '$intVal', '$boolVal', '$floatVal', '$stringVal', '$committed');"
     done
   done
 }

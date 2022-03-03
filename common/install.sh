@@ -35,6 +35,13 @@ if [ "$(grep MemTotal /proc/meminfo | tr -dc '0-9')" -le "6000000" ]; then
   rm -rf "$MODPATH/system/product/etc/sysconfig/*6gb*.xml"
 fi
 
+# Crashing on boot
+if [ "$API" -lt 31 ]; then
+  ui_print " [!] (SDK) Safely removing privapp permissions xml..."
+  ui_print ''
+  rm -rf "$MODPATH"/system/product/etc/permissions/privapp-permissions-google-p.xml
+fi
+
 # Running installer addins
 for addin in "$MODPATH"/common/*.sh; do
   if [ "$addin" != "$MODPATH"/common/install.sh ]; then

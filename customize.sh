@@ -12,7 +12,7 @@ chmod 0644 "$MODPATH/system/product/app/*/*.apk"
 # Remove comments from files and place them, add blank line to end if not already present
 for file in $(find "$MODPATH" -type f -name "*.sh" -o -name "*.prop" -o -name "*.rule"); do
   [ -f "$file" ] && {
-    sed -i -e "/^#/d" -e "/^ *$/d" "$file"
+    sed -i -e "/#/d" -e "/^ *$/d" "$file"
     [ "$(tail -1 "$file")" ] && echo "" >>"$file"
   }
 done

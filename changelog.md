@@ -1,3 +1,9 @@
+**2022-03-03 (22030300)**
+- Fixed [insert_gms_features()](https://github.com/Pixel-Props/pixel.features/blob/main/addon/SQLite3/install.sh) where variables were not defined which caused the service to not install flags properly.
+- Added more flags to the [service.sh](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/sysconfig/service.sh)
+- SDK checks installer. [privapp-permissions-google-p.xml](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/permissions/privapp-permissions-google-p.xml) will be removed from the module (Causing [Bootloop on A11](https://github.com/Pixel-Props/pixel.features/issues/3#issuecomment-1057879710)).
+- The service.sh is still not working. I am opening an issue on the Magisk repo.
+
 **2022-02-28 (22022801-22022802)**
 - Enabling new Google Dialer pad on sqlite3 GMS
 - Disabled uninstaller as it is too destructive for now
@@ -10,7 +16,7 @@
 - SDK checks for NgaResources, DevicePersonalization and PixelWallpapers2021
 - Previously the script was not installing packages, Now it has a proper [install_package()](https://github.com/Pixel-Props/pixel.features/blob/main/addon/Utils/install.sh).
 - The script now automatically warns the user if there is a newer version of the script.
-- Patching device_config flags and system prefs at [service.payload.sh](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/sysconfig/service.payload.sh)
+- Patching device_config flags and system prefs at [service.sh](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/sysconfig/service.sh)
 - Checks for memory availability before using [GoogleCamera_6gb_or_more_ram.xml](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/sysconfig/GoogleCamera_6gb_or_more_ram.xml)
 - Volume keys now have a fallback that re-assign new keys
 - The installer now has an option to automatically install recommended settings

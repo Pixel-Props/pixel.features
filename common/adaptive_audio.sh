@@ -17,7 +17,7 @@ if [ -f "$MusicDetector_location" ] &&
 
   # Adding flags
   ui_print ' [+] Adding flags...'
-  insert_gms_features "FlagOverrides" $packageName 0 null 1 null null 0 "Echo__enable_headphones_suggestions_from_agsa" "Echo__smartspace_enable_doorbell" "Echo__smartspace_enable_earthquake_alert_predictor" "Echo__smartspace_enable_echo_settings" "Echo__smartspace_enable_light_predictor" "Echo__smartspace_enable_paired_device_predictor" "Echo__smartspace_enable_safety_check_predictor" "NowPlaying__ambient_music_on_demand_enabled" "NowPlaying__cloud_api_allowed" "NowPlaying__enable_usage_fa" "NowPlaying__favorites_enabled" "NowPlaying__handle_ambient_music_results_with_history" "NowPlaying__youtube_export_enabled" "Overview__enable_lens_r_overview_long_press" "Overview__enable_lens_r_overview_select_mode" "Overview__enable_lens_r_overview_translate_action"
+  insert_gms_features "FlagOverrides" $packageName 0 null 1 null null 1 "Echo__enable_headphones_suggestions_from_agsa" "Echo__smartspace_enable_doorbell" "Echo__smartspace_enable_earthquake_alert_predictor" "Echo__smartspace_enable_echo_settings" "Echo__smartspace_enable_light_predictor" "Echo__smartspace_enable_paired_device_predictor" "Echo__smartspace_enable_safety_check_predictor" "NowPlaying__ambient_music_on_demand_enabled" "NowPlaying__cloud_api_allowed" "NowPlaying__enable_usage_fa" "NowPlaying__favorites_enabled" "NowPlaying__handle_ambient_music_results_with_history" "NowPlaying__youtube_export_enabled" "Overview__enable_lens_r_overview_long_press" "Overview__enable_lens_r_overview_select_mode" "Overview__enable_lens_r_overview_translate_action"
 
   # Done
   ui_print " [✓] Installed"
