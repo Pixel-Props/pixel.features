@@ -45,6 +45,14 @@ install_package() {
   rm -rf "$2"
 }
 
+grep_prop() {
+  REGEX="s/^$1=//p"
+  shift
+  FILES=$*
+  [ -z "$FILES" ] && FILES='/system/build.prop'
+  cat $FILES 2>/dev/null | dos2unix | sed -n "$REGEX" | head -n 1
+}
+
 # Get the download size of a website using wget
 download_size() {
   [ "$1" ] && url=$1 || url="https://example.com"

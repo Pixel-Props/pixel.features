@@ -1,8 +1,32 @@
-#!/system/bin/sh
+#!/data/adb/magisk/busybox sh
+# shellcheck shell=sh
+
+##
+# Script environment
+##
+
 export MODDIR="${0%/*}"
+export MODPATH="$MODDIR"
+export TMPDIR="$MODDIR"/tmp
+export LOGPATH="$MODDIR"/service.log
 
 log_service() {
-  echo "[$(date)] $*" >>"$MODDIR"/service.log
+  # If the log path is bigger than 5MB, delete the oldest log
+  if [ -f "$LOGPATH" ] && [ "$(wc -c <"$LOGPATH")" -gt 5000000 ]; then
+    rm -f "$LOGPATH"
+  fi
+
+  # Write log to file
+  echo "[$(date)] $*" >>"$LOGPATH"
+}
+
+ui_print() {
+  log_service "$*"
+}
+
+abort() {
+  log_service "$*"
+  exit 1
 }
 
 wait_until_boot_complete() {
@@ -11,8 +35,7 @@ wait_until_boot_complete() {
     # CHECK
     if [ "$loop_count" -gt 10 ]; then
       log_service "Exceeded the maximum number of retries for loading the service."
-      log_service "Boot Animation: $(getprop init.svc.bootanim) | Boot Complete: $(getprop sys.boot_completed) | /sdcard: $(if [ -d /sdcard ]; then echo "Exists"; else echo "Does not exist"; fi)"
-      exit 0
+      abort "Boot Animation: $(getprop init.svc.bootanim) | Boot Complete: $(getprop sys.boot_completed) | /sdcard: $(if [ -d /sdcard ]; then echo "Exists"; else echo "Does not exist"; fi)"
     fi
 
     # WAIT
@@ -21,12 +44,40 @@ wait_until_boot_complete() {
   done
 }
 
+export_IS64BIT() {
+  abi_prop=$(getprop ro.product.cpu.abi)
+  IS64BIT=false
+
+  if [ "${abi_prop%64}" != "$abi_prop" ]; then
+    IS64BIT=true
+  fi
+  export IS64BIT
+}
+
 ##
-# Begin patching config files
+# End of Script environment
 ##
 
-set_patch_filepath() {
-  export PATCH_FILEPATH="$1"
+##
+##
+
+##
+# Begin patching device_prefs
+##
+
+export_prop_prefs() {
+  propPath="$1"
+  shift
+
+  for propName in "$@"; do
+    pref_prop="$(grep_prop "$propName" "$propPath")"
+
+    # Remove quotes from the filepath
+    PREF_FILEPATH="${pref_prop%\"}"
+    PREF_FILEPATH="${PREF_FILEPATH#\"}"
+
+    export "$propName"="$PREF_FILEPATH"
+  done
 }
 
 str_replace() {
@@ -44,6 +95,11 @@ str_replace() {
   # Escape the subject
   subject=$(echo "$subject" | sed -e 's/[]\/$*.^|[]/\\&/g')
 
+  # Save subject to a temp file
+  TMPDIR_FILE="$TMPDIR/$(xxd -l 5 -c 5 -p </dev/random)"
+  touch "$TMPDIR_FILE"
+  echo "$subject" >"$TMPDIR_FILE"
+
   # Loop true subject new lines
   while read -r line; do
     # Grep the line from the subject and replace it
@@ -57,112 +113,114 @@ str_replace() {
 
     # Replace the subject with the replaced subject in the file
     sed -i "s/$subject/$escaped_replaced_subject/g" "$file"
-  done <<<"$subject"
+  done <"$TMPDIR_FILE"
+
+  # Remove the temp file
+  rm -f "$TMPDIR_FILE"
 }
 
 bool_patch_false() {
-  str_replace true false "$1" "$PATCH_FILEPATH"
+  str_replace true false "$1" "$xml_pref_path"
 }
 
 bool_patch() {
-  str_replace false true "$1" "$PATCH_FILEPATH"
+  str_replace false true "$1" "$xml_pref_path"
 }
 
 value_patch() {
   # Replace subject with a parsed version of itself
-  subject=$(grep "$1" "$PATCH_FILEPATH" | xargs | sed 's/> </>\n</g')
+  subject=$(grep "$1" "$xml_pref_path" | xargs | sed 's/> </>\n</g')
+
+  # Save subject to a temp file
+  TMPDIR_FILE="$TMPDIR/$(xxd -l 5 -c 5 -p </dev/random)"
+  touch "$TMPDIR_FILE"
+  echo "$subject" >"$TMPDIR_FILE"
 
   while read -r line; do
-    #If the string has a closing tag use the value inside it
+    # If the string has a closing tag use the value inside it
     if [[ "$line" == *"</"* ]]; then
-      str_replace "$(echo "$line" | cut -d'>' -f2 | cut -d'<' -f1)" "$2" "$1" "$PATCH_FILEPATH"
+      str_replace "$(echo "$line" | cut -d'>' -f2 | cut -d'<' -f1)" "$2" "$1" "$xml_pref_path"
     else
-      str_replace "$(echo "$line" | sed -rn 's/.*value="(.*)".*/\1/p')" "$2" "$1" "$PATCH_FILEPATH"
+      str_replace "$(echo "$line" | sed -rn 's/.*value="(.*)".*/\1/p')" "$2" "$1" "$xml_pref_path"
     fi
-  done <<<"$subject"
+  done <"$TMPDIR_FILE"
+
+  # Remove the temp file
+  rm -f "$TMPDIR_FILE"
 }
 
 set_prefs() {
-  iso_lang_code="af,af-ZA,ar,ar-AE,ar-BH,ar-DZ,ar-EG,ar-IQ,ar-JO,ar-KW,ar-LB,ar-LY,ar-MA,ar-OM,ar-QA,ar-SA,ar-SY,ar-TN,ar-YE,az,az-AZ,az-AZ,be,be-BY,bg,bg-BG,bs-BA,ca,ca-ES,cs,cs-CZ,cy,cy-GB,da,da-DK,de,de-AT,de-CH,de-DE,de-LI,de-LU,dv,dv-MV,el,el-GR,en,en-AU,en-BZ,en-CA,en-CB,en-GB,en-IE,en-JM,en-NZ,en-PH,en-TT,en-US,en-ZA,en-ZW,eo,es,es-AR,es-BO,es-CL,es-CO,es-CR,es-DO,es-EC,es-ES,es-ES,es-GT,es-HN,es-MX,es-NI,es-PA,es-PE,es-PR,es-PY,es-SV,es-UY,es-VE,et,et-EE,eu,eu-ES,fa,fa-IR,fi,fi-FI,fo,fo-FO,fr,fr-BE,fr-CA,fr-CH,fr-FR,fr-LU,fr-MC,gl,gl-ES,gu,gu-IN,he,he-IL,hi,hi-IN,hr,hr-BA,hr-HR,hu,hu-HU,hy,hy-AM,id,id-ID,is,is-IS,it,it-CH,it-IT,ja,ja-JP,ka,ka-GE,kk,kk-KZ,kn,kn-IN,ko,ko-KR,kok,kok-IN,ky,ky-KG,lt,lt-LT,lv,lv-LV,mi,mi-NZ,mk,mk-MK,mn,mn-MN,mr,mr-IN,ms,ms-BN,ms-MY,mt,mt-MT,nb,nb-NO,nl,nl-BE,nl-NL,nn-NO,ns,ns-ZA,pa,pa-IN,pl,pl-PL,ps,ps-AR,pt,pt-BR,pt-PT,qu,qu-BO,qu-EC,qu-PE,ro,ro-RO,ru,ru-RU,sa,sa-IN,se,se-FI,se-FI,se-FI,se-NO,se-NO,se-NO,se-SE,se-SE,se-SE,sk,sk-SK,sl,sl-SI,sq,sq-AL,sr-BA,sr-BA,sr-SP,sr-SP,sv,sv-FI,sv-SE,sw,sw-KE,syr,syr-SY,ta,ta-IN,te,te-IN,th,th-TH,tl,tl-PH,tn,tn-ZA,tr,tr-TR,tt,tt-RU,ts,uk,uk-UA,ur,ur-PK,uz,uz-UZ,uz-UZ,vi,vi-VN,xh,xh-ZA,zh,zh-CN,zh-HK,zh-MO,zh-SG,zh-TW,zu,zu-ZA"
+  log_service "Setting prefs..."
 
-  # Turbo
-  set_patch_filepath "/data/data/com.google.android.apps.turbo/shared_prefs/phenotypeFlags.xml"
-  bool_patch AdaptiveCharging__enabled
-  bool_patch AdaptiveCharging__v1_enabled
+  for file in "$MODDIR"/device_prefs/*/*.ini; do
+    # Get folder base name
+    folder_path=${file%/*}         # Remove last /
+    folder_name=${folder_path##*/} # Remove path before folder name
 
-  # Call Screening
-  set_patch_filepath "/data/data/com.google.android.dialer/shared_prefs/dialer_phenotype_flags.xml"
-  bool_patch speak_easy
-  bool_patch speakeasy
-  bool_patch call_screen
-  bool_patch revelio
-  bool_patch record
-  bool_patch atlas
+    if [ -f "$file" ]; then
+      file_name=${file##*/}
+      file_name_no_ext=${file_name%.*}
+      log_service "Patching \"$folder_name\" on \"$file_name_no_ext\""
 
-  # GBoard
-  set_patch_filepath "/data/data/com.google.android.inputmethod.latin/shared_prefs/flag_value.xml"
-  bool_patch lm
-  bool_patch nga
-  bool_patch silk
-  bool_patch lens
-  bool_patch agsa
-  bool_patch tflite
-  bool_patch tiresias
-  bool_patch redesign
-  bool_patch floating
-  bool_patch translate
-  bool_patch multiword
-  bool_patch generation
-  bool_patch voice_promo
-  bool_patch dynamic_art
-  bool_patch multilingual
-  bool_patch enable_voice
-  bool_patch feature_cards
-  bool_patch log_auto_space
-  bool_patch pill_shaped_key
-  bool_patch personalization
-  bool_patch fast_access_bar
-  bool_patch material3_theme
-  bool_patch translate_new_ui
-  bool_patch keyboard_redesign
-  bool_patch offline_translate
-  bool_patch enable_dynamic_trainer
-  bool_patch enable_preemptive_decode
-  bool_patch enable_trainer_manager_v2
-  bool_patch enable_matrializer_manager
-  bool_patch enable_multiword_predictions
-  bool_patch enable_email_provider_completion
-  bool_patch use_scrollable_candidate_for_voice
-  bool_patch enable_inline_suggestions_on_client_side
-  bool_patch enable_training_cache_metrics_processors
-  bool_patch enable_inline_suggestions_on_decoder_side
-  bool_patch show_voice_reconversion_suggestion_as_chip
-  bool_patch enable_show_inline_suggestions_in_popup_view
-  bool_patch show_suggestions_for_selected_text_while_dictating
-  bool_patch enable_core_typing_experience_indicator_on_candidates
-  bool_patch enable_core_typing_experience_indicator_on_composing_text
-  bool_patch_false personalization
-  bool_patch_false show_branding_on_space
-  value_patch enable_magic_g_locales ""
-  value_patch crank_min_char_num_limit 5
-  value_patch crank_max_char_num_limit 100
-  value_patch branding_fadeout_delay_ms 900
-  value_patch user_history_learning_strategies 1
-  value_patch inline_suggestion_experiment_version 4
-  value_patch show_branding_interval_seconds 86400000
-  value_patch speech_ondevice_locales "$iso_lang_code"
-  value_patch mutex_profiler_inverse_stack_trace_freq 4096
-  value_patch key_locale_cutout_switches_lm "$iso_lang_code"
-  value_patch max_chars_to_read_before_and_after_cursor 1024
-  value_patch enable_dynamic_art_language_tags "$iso_lang_code"
-  value_patch multiword_candidate_language_tags "$iso_lang_code"
-  value_patch crank_inline_suggestion_language_tags "$iso_lang_code"
-  value_patch enable_expression_moment_language_tags "$iso_lang_code"
-  value_patch enable_autocorrection_adaptation_locales "$iso_lang_code"
+      # Export prefs
+      export_prop_prefs "$file" "db_pref_packageName" "db_pref_path" "xml_pref_path"
+
+      # Create temp file
+      TMPDIR_FILE="$TMPDIR/$(xxd -l 5 -c 5 -p </dev/random)"
+      touch "$TMPDIR_FILE"
+
+      # Go true file lines
+      while read -r line; do
+        # Remove new line from line
+        line=${line%$'\r'}
+
+        # Ignore comments, empty lines and script specific lines
+        if [[ -n "$line" ]] && [[ "$line" != "#"* ]] && [[ "$line" != *"_pref_"* ]]; then
+          # Save line to a temp file
+          echo "$line" >"$TMPDIR_FILE"
+
+          # Explode the key and value based on the equal sign
+          IFS='=' read -r key value <"$TMPDIR_FILE"
+
+          # Remove the quotes sign between the value
+          value=${value#\"}
+          value=${value%\"}
+
+          log_service "Patching \"$key\" -> \"$value\""
+
+          # Patch XML values
+          value_patch "$key" "$value"
+
+          # Switch the type of patch value based on folder name
+          case "$folder_name" in
+          "boolean")
+            insert_gms_features "FlagOverrides" "$db_pref_packageName" 0 null "$value" null null 1 "$key"
+            ;;
+          "integer")
+            insert_gms_features "FlagOverrides" "$db_pref_packageName" 0 "$value" null null null 1 "$key"
+            ;;
+          "string")
+            insert_gms_features "FlagOverrides" "$db_pref_packageName" 0 null null null "$value" 1 "$key"
+            ;;
+          *)
+            ui_print "Unknown folder name: $folder_name"
+            ;;
+          esac
+
+        fi
+      done <"$file"
+
+      # Remove temp file
+      rm -f "$TMPDIR_FILE"
+    fi
+  done
 }
 
 ##
-# End patching xml files
+# End patching device_prefs
+##
+
+##
 ##
 
 ##
@@ -188,11 +246,22 @@ set_flags() {
       # Set service name
       dc_set_service "$file_name_no_ext"
 
+      # Create temp file
+      TMPDIR_FILE="$TMPDIR/$(xxd -l 5 -c 5 -p </dev/random)"
+      touch "$TMPDIR_FILE"
+
       # Go true file lines
       while read -r line; do
-        IFS='=' read -r key value <<<"$line"
+        # Save line to a temp file
+        echo "$subject" >"$TMPDIR_FILE"
+
+        # Explode the key and value based on the equal sign
+        IFS='=' read -r key value <"$TMPDIR_FILE"
         dc_put "$key" "$value"
-      done <<<"$(cat "$file")"
+      done <"$file"
+
+      # Remove temp file
+      rm -f "$TMPDIR_FILE"
     fi
   done
 }
@@ -201,12 +270,36 @@ set_flags() {
 # End patching device_config
 ##
 
-# Starting...
+##
+##
+
+##
+# Script start
+##
+
 log_service "Service started."
 log_service "MODDIR: $MODDIR"
 wait_until_boot_complete
+export_IS64BIT
+mkdir "$TMPDIR"
 log_service "System fully started. Beginning to patch..."
+
+# Run utils
+[ -f "$MODDIR/common/addon/Utils/install.sh" ] && . "$MODDIR/common/addon/Utils/install.sh"
+
+# Run SQLite3
+[ -f "$MODDIR/common/addon/SQLite3/install.sh" ] && . "$MODDIR/common/addon/SQLite3/install.sh"
 
 # Start patching
 set_flags
 set_prefs
+
+# Clean temp files
+rm -rf "$TMPDIR"
+
+# Finish
+log_service "Service finished."
+
+##
+# Script end
+##

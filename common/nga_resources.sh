@@ -7,6 +7,7 @@ if [ "$API" -ge 31 ]; then
   if has_package "$packageName"; then
     ui_print " [?] NgaResources is already installed on this device."
     ui_print ''
+    rm -rf "$MODPATH"/system/product/app/NgaResources*
   else
     ui_print " [?] NgaResources is not installed on this device."
   fi

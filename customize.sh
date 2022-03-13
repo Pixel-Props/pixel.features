@@ -1,10 +1,10 @@
 #!/system/bin/sh
 
 # Running installer
-[ -f "$MODPATH/common/install.sh" ] && . "$MODPATH/common/install.sh"
+[ -f "$MODPATH/common/install.sh" ] && . "$MODPATH"/common/install.sh
 
-# Cleanup
-[ -d "$MODPATH/common" ] && rm -rf "$MODPATH/common"
+# Cleanup common install files
+[ -d "$MODPATH/common" ] && rm -rf "$MODPATH"/common/*.sh
 
 # Fixing permission
 chmod 0644 "$MODPATH/system/product/app/*/*.apk"
@@ -12,7 +12,7 @@ chmod 0644 "$MODPATH/system/product/app/*/*.apk"
 # Remove comments from files and place them, add blank line to end if not already present
 for file in $(find "$MODPATH" -type f -name "*.sh" -o -name "*.prop" -o -name "*.rule"); do
   [ -f "$file" ] && {
-    sed -i -e "/#/d" -e "/^ *$/d" "$file"
+    sed -i -e "/^[[:blank:]]*#/d" -e "/^ *$/d" "$file"
     [ "$(tail -1 "$file")" ] && echo "" >>"$file"
   }
 done

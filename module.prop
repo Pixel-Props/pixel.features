@@ -1,7 +1,7 @@
 id=Pixel_Features
 name=Pixel Features
-version=2022-03-03
-versionCode=22030300
+version=2022-03-13
+versionCode=22031300
 author=Tesla
 description=A mix of files from the Pixel Phones to unlock the full potential of Android
 updateJson=https://raw.githubusercontent.com/Pixel-Props/pixel.features/main/update.json

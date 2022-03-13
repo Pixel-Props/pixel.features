@@ -7,6 +7,7 @@ if [ "$API" -ge 31 ]; then
   if has_package "$packageName"; then
     ui_print " [?] Android System Intelligence is already installed on this device."
     ui_print ''
+    rm -rf "$MODPATH"/system/product/priv-app/DevicePersonalization*
   else
     ui_print " [?] Android System Intelligence is not installed on this device."
   fi

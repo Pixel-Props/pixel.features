@@ -7,6 +7,7 @@ if [ "$API" -ge 31 ]; then
   if has_package "$packageName"; then
     ui_print " [?] PixelWallpapers2021 is already installed on this device."
     ui_print ''
+    rm -rf "$MODPATH"/system/product/app/PixelWallpapers2021*
   else
     ui_print " [?] PixelWallpapers2021 is not installed on this device."
   fi

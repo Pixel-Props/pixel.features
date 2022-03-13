@@ -2,7 +2,7 @@
 
 ui_print "[?+] Keeping *breaks* Unlimited GPhoto."
 ui_print "[?-] Removing *removes* some new features."
-if selector "keep 2020 and later sysconfigs ?" null "Keep" "Remove"; then
+if selector "Keep 2020 and later sysconfigs ?" null "Keep" "Remove"; then
   ui_print " [+] Keeping 2020 and later pixel experience xml"
   ui_print ''
 else
