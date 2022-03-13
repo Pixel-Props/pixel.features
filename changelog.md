@@ -1,8 +1,9 @@
-**2022-03-13 (22031300)**
+**2022-03-13 (22031300-22031301)**
 - Made a device_prefs directory where all the device preferences are stored and used by both the service and installer.
 - Fixed a bug where [busybox](https://github.com/topjohnwu/Magisk/issues/5540#issuecomment-1059940824) could not read from a string (creating temp file instead). Which resulted in a fix of the [service.sh](https://github.com/Pixel-Props/pixel.features/blob/main/system/product/etc/sysconfig/service.sh) script.
 - The installer now backs up Utils to the root MODPATH as it is used by the service.
 - If does not have package the package is removed from the module.
+- Updated device configs and prefs.
 
 **2022-03-03 (22030300)**
 - Fixed [insert_gms_features()](https://github.com/Pixel-Props/pixel.features/blob/main/addon/SQLite3/install.sh) where variables were not defined which caused the service to not install flags properly.
